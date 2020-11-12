@@ -4,6 +4,7 @@ from typing import List
 # from game import Game
 from functools import lru_cache
 import pprint
+# from numpy_l
 
 INF = float('inf')
 M_INF = -float('inf')
@@ -11,7 +12,7 @@ M_INF = -float('inf')
 
 class AI_Unit:
 
-    @lru_cache()
+    # @lru_cache()
     def is_over(self, b, val) ->  bool:
         win = False 
         # count_3s = 0       
@@ -60,7 +61,11 @@ class AI_Unit:
         # score based on number of 3 group
         # if 0 socore but middle lane have empty slot then score + 1 
         # print("state")
-        board = np.array(b)    
+        board = np.array(b)
+        # opp
+        opp = np.abs(10-val)
+        # def_point = 0   
+        aval = 0
         count_3s = 0       
         # diagonal win, thre are 24 possible win position
         for j in range(7):
@@ -69,11 +74,14 @@ class AI_Unit:
                 v_sum = board[:,j:j+4].sum(axis=1)
                 if val*3 in v_sum:
                     count_3s += 1
+                aval += ((v_sum % val)==0).sum()
             for i in range(3):
                 # horizontal 
                 h_sum = board[i:i+4,:].sum(axis=0)
                 if val*3 in h_sum:
                     count_3s += 1
+                aval += ((h_sum % val)==0).sum()
+                
 
                 # diagonal /
                 if j <= 3:
@@ -81,6 +89,8 @@ class AI_Unit:
                                 board[i+2,j+2] + board[i+3,j+3]
                     if diag_sum_1 == val*3:
                         count_3s += 1
+                    if diag_sum_1 % val == 0: 
+                        aval+=1
 
                 # diagonal \
                 if j >= 3:
@@ -88,9 +98,13 @@ class AI_Unit:
                                 board[i+2,j-2] + board[i+3,j-3]
                     if diag_sum_2 == val*3:
                         count_3s += 1
+                    if diag_sum_2 % val == 0: 
+                        aval+=1
+        # out = count_3s
+        out = aval
         if val == 1:
-            count_3s *= -1
-        return count_3s
+            out *= -1
+        return out
 
     def apply_move(self, board:np.ndarray, col:int,
     horizontal_view:List[int], val) -> List:
@@ -110,6 +124,8 @@ class AI_Unit:
         beta=INF,
         depth:int=5,
     ):
+        if sum(horizontal_view) <= 4:
+            return 3
         moves = self.generate_moves(horizontal_view)
         best_score = M_INF
         best_move = -1
@@ -147,6 +163,7 @@ class AI_Unit:
                 best_score = max(move_score, best_score)
                 alpha = max(alpha, best_score)
                 if beta <= alpha:
+                    # print("pruned")
                     break
         return best_score
     
@@ -175,6 +192,7 @@ class AI_Unit:
             best_score = min(best_score, move_score)
             beta = min(beta, move_score)
             if beta <= alpha:
+                # print("pruned")
                 break
         return best_score
 
