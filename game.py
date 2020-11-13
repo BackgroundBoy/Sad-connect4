@@ -17,7 +17,7 @@ class Game:
     horizontal_state = [0,0,0,0,0,0,0]
 
     player_state = 0
-
+    turn = 0
     player = []
     ai = AI_Unit()
 
@@ -100,13 +100,20 @@ class Game:
 
         else:
             print("AI turn")
+            if self.turn < 10:
+                depth = 6
+            elif self.turn < 30:
+                depth = 7
+            elif self.turn >= 30:
+                depth  = 12  
             col = self.ai.alpha_beta_minimax(self.board, self.horizontal_state,\
-                                             depth=7)
+                                             depth=depth)
             print(col)
             # col = 0
 
         if self.insert_coin(col, self.player[self.player_state]):
             self.player_state = (self.player_state+1)%2
+            self.turn += 1
             return True
         return False
         
