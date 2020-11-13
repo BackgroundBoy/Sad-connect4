@@ -24,13 +24,13 @@ class Game:
     def __init__(self):
         first = input("Player go first?[y/n]").lower()
         if first == 'y':
-            self.player = [1,9]
+            self.player = [5,9]
         else:
-            self.player = [9,1]
+            self.player = [9,5]
     
     def is_over(self) -> (bool,int):
         win = False 
-        p1,p2 = 1,9
+        p1,p2 = 5,9
         win_player = -1 
         for j in range(7):
             if win:
@@ -94,13 +94,13 @@ class Game:
         if over:
             print(f'Player #%d win' % player)
             sys.exit()
-        if self.player[self.player_state] == 1:
+        if self.player[self.player_state] == 5:
             print("player turn!, please input move")
             col = int(input("select column(0-6): "))
 
         else:
             print("AI turn")
-            if self.turn < 10:
+            if self.turn < 15:
                 depth = 6
             elif self.turn < 30:
                 depth = 7
